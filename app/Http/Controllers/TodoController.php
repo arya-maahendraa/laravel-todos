@@ -8,9 +8,14 @@ use Illuminate\Http\Request;
 
 class TodoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
-        $todos = Todo::orderBy('completed', 'asc')->get();
+        $todos = auth()->user()->todos->sortBy('completed');
         return view('todos.index', compact('todos'));
     }
 
@@ -21,8 +26,7 @@ class TodoController extends Controller
 
     public function store(TodoCreateRequest $request)
     {
-
-        Todo::create($request->all());
+        auth()->user()->todos()->create($request->all());
         return redirect(route('todo.index'))->with('message', 'Todo crete successfully');
     }
 
